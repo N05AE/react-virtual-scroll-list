@@ -2,7 +2,7 @@
     "extends": [
         "airbnb",
         "plugin:prettier/recommended"
-    ], // eslint扩展规则
+    ],
     "parserOptions": {
         "ecmaVersion": 7,
         "sourceType": "module",
@@ -10,8 +10,8 @@
             "jsx": true
         }
     },
-    "parser": "babel-eslint", // 解决ES6 improt会报错
-    "env": { // eg如果不配置browser，window就会被eslint报undefined的错
+    "parser": "babel-eslint", 
+    "env": { 
         "es6": true,
         "browser": true,
         "node": true

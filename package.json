@@ -46,15 +46,14 @@
 	},
 	"husky": {
 		"hooks": {
-			"pre-commit": "npm run test", // 在commit之前先执行npm run test命令"commit-msg": "commitlint -e $HUSKY_GIT_PARAMS"// 校验commit时添加的备注信息是否符合我们要求的规范 
+			"pre-commit": "npm run test"
 		}
 	},
 	"lint-staged": {
-		// 此处可以配置文件夹和文件类型的范围
 		"src/**/*.{jsx,txs,ts,js,json,css,md}": [
-			"prettier --write", // 先使用prettier进行格式化
-			"eslint --fix", // 再使用eslint进行自动修复
-			"git add" // 所有通过的话执行git
+			"prettier --write", 
+			"eslint --fix", 
+			"git add" 
 		]
 	}
 }
