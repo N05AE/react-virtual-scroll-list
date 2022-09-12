@@ -1,11 +1,11 @@
 {
-  "name": "react-virtual-list",
+  "name": "virtual-grid-react",
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "storybook": "start-storybook -p 6006",
+    "build": "rollup -c",
+    "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook"
   },
   "repository": {
@@ -19,30 +19,39 @@
     "url": "https://github.com/N0SAE/react-virtual-list/issues"
   },
   "homepage": "https://github.com/N0SAE/react-virtual-list#readme",
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0",
+    "prop-types": ">=15.7.2"
+  },
   "devDependencies": {
+    "@babel/cli": "^7.18.10",
     "@babel/core": "^7.18.13",
-    "@storybook/addon-actions": "^6.5.10",
-    "@storybook/addon-essentials": "^6.5.10",
-    "@storybook/addon-interactions": "^6.5.10",
-    "@storybook/addon-links": "^6.5.10",
-    "@storybook/builder-webpack4": "^6.5.10",
-    "@storybook/manager-webpack4": "^6.5.10",
+    "@babel/plugin-proposal-class-properties": "^7.18.6",
+    "@babel/preset-env": "^7.19.0",
+    "@babel/preset-react": "^7.18.6",
+    "@rollup/plugin-babel": "^5.3.1",
+    "@rollup/plugin-commonjs": "^22.0.2",
+    "@rollup/plugin-json": "^4.1.0",
+    "@rollup/plugin-node-resolve": "^14.0.1",
+    "@storybook/addon-a11y": "^6.5.10",
     "@storybook/react": "^6.5.10",
-    "@storybook/testing-library": "^0.0.13",
     "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.5",
-    "eslint": "^8.23.0",
-    "eslint-config-airbnb": "^19.0.4",
-    "eslint-config-prettier": "^8.5.0",
-    "eslint-plugin-import": "^2.26.0",
+    "eslint": "^8.23.1",
     "eslint-plugin-jsx-a11y": "^6.6.1",
-    "eslint-plugin-prettier": "^4.2.1",
-    "eslint-plugin-react": "^7.31.5",
+    "eslint-plugin-react": "^7.31.8",
+    "grunt": "^1.5.3",
+    "grunt-release": "^0.14.0",
     "husky": "^8.0.1",
     "lint-staged": "^13.0.3",
     "prettier": "^2.7.1",
-    "pretty-quick": "^3.1.3",
-    "react-scripts": "^5.0.1"
+    "prop-types": "^15.8.1",
+    "react": "^17.0.2",
+    "react-dom": "^17.0.2",
+    "rollup": "^2.79.0",
+    "rollup-plugin-cleanup": "^3.2.1",
+    "rollup-plugin-peer-deps-external": "^2.2.4"
   },
   "husky": {
     "hooks": {
@@ -52,7 +61,7 @@
   "lint-staged": {
     "src/**/*.{jsx,txs,ts,js,json,css,md}": [
       "prettier --write",
-      "eslint --fix",
+      "eslint --fix --debug",
       "git add"
     ]
   }
