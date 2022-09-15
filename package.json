@@ -20,9 +20,10 @@
   },
   "homepage": "https://github.com/N0SAE/react-virtual-list#readme",
   "peerDependencies": {
+    "prop-types": ">=15.7.2",
     "react": ">=16.8.0",
     "react-dom": ">=16.8.0",
-    "prop-types": ">=15.7.2"
+    "styled-components": ">=5.2.1"
   },
   "devDependencies": {
     "@babel/cli": "^7.18.10",
@@ -51,7 +52,8 @@
     "react-dom": "^17.0.2",
     "rollup": "^2.79.0",
     "rollup-plugin-cleanup": "^3.2.1",
-    "rollup-plugin-peer-deps-external": "^2.2.4"
+    "rollup-plugin-peer-deps-external": "^2.2.4",
+    "styled-components": "^5.3.5"
   },
   "husky": {
     "hooks": {
