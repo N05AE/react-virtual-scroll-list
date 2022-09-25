@@ -1,15 +1,26 @@
-import { array, node, number } from 'prop-types';
+import { arrayOf, func, number, oneOf, shape, string } from 'prop-types';
+
+export const GridDirection = {
+  VERTICAL: 'vertical',
+  HORIZONTAL: 'horizontal',
+};
 
 export const virtualGridProps = {
-  itemRenderer: node.isRequired,
-  data: array.isRequired,
-  row: number.isRequired,
-  col: number.isRequired,
-  width: number.isRequired,
-  height: number.isRequired,
+  itemRenderer: func.isRequired,
+  data: arrayOf(shape({ uniKey: string.isRequired })).isRequired,
+  unit: string,
+  width: string,
+  height: string,
+  direction: string,
+  limitCountOnDirection: number,
+  tabIndex: string,
+  className: string,
 };
 
 export const virtualGridDefaultProps = {
-  width: 200,
-  height: 200,
+  unit: 'px',
+  width: '100%',
+  height: '100%',
+  direction: GridDirection.HORIZONTAL,
+  limitCountOnDirection: 3,
 };

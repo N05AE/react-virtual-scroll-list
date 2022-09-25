@@ -10,7 +10,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/N0SAE/react-virtual-list.git"
+    "url": "git+https://github.com/N05AE/react-virtual-scroll-list.git"
   },
   "keywords": [],
   "author": "",
@@ -42,6 +42,7 @@
     "eslint": "^8.23.1",
     "eslint-plugin-jsx-a11y": "^6.6.1",
     "eslint-plugin-react": "^7.31.8",
+    "eslint-plugin-react-hooks": "^4.6.0",
     "grunt": "^1.5.3",
     "grunt-release": "^0.14.0",
     "husky": "^8.0.1",

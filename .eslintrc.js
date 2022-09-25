@@ -17,6 +17,8 @@ module.exports = {
   rules: {
     'react/jxs-users-react': 'error',
     'reacgt/jxs-user--vars': 'error',
+    'react-hooks/rules-of-hooks': 'error', // 检查 Hook 的规则
+    'react-hooks/exhaustive-deps': 'warn', // 检查 effect 的依赖
   },
   settings: {
     react: {
@@ -38,5 +40,5 @@ module.exports = {
       linkAttribute: 'to',
     },
   ],
-  plugins: ['jsx-a11y', 'flowtype'],
+  plugins: ['jsx-a11y', 'flowtype', 'react-hooks'],
 };
