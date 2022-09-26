@@ -7,7 +7,7 @@ export const GridDirection = {
 
 export const virtualGridProps = {
   itemRenderer: func.isRequired,
-  data: arrayOf(shape({ uniKey: string.isRequired })).isRequired,
+  data: arrayOf(shape({ key: string.isRequired })).isRequired,
   unit: string,
   width: string,
   height: string,
