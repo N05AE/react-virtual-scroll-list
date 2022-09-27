@@ -1,6 +1,6 @@
 import { arrayOf, func, number, oneOf, shape, string } from 'prop-types';
 
-export const GridDirection = {
+export const GridDataDirection = {
   VERTICAL: 'vertical',
   HORIZONTAL: 'horizontal',
 };
@@ -11,7 +11,7 @@ export const virtualGridProps = {
   unit: string,
   width: string,
   height: string,
-  direction: string,
+  dataDirection: string,
   limitCountOnDirection: number,
   tabIndex: string,
   className: string,
@@ -21,6 +21,6 @@ export const virtualGridDefaultProps = {
   unit: 'px',
   width: '100%',
   height: '100%',
-  direction: GridDirection.HORIZONTAL,
+  dataDirection: GridDataDirection.HORIZONTAL,
   limitCountOnDirection: 3,
 };

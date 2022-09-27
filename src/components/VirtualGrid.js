@@ -6,7 +6,7 @@ import {
   ItemWrapper,
 } from '../styles/VirtualGridStyles';
 import {
-  GridDirection,
+  GridDataDirection,
   virtualGridDefaultProps,
   virtualGridProps,
 } from '../types';
@@ -317,13 +317,13 @@ export class VirtualGrid extends Component {
   };
 
   initContentProps = () => {
-    const { direction, limitCountOnDirection, data } = this.props;
+    const { dataDirection, limitCountOnDirection, data } = this.props;
     const { defaultItemData, contentProps } = this.state;
     const dataLen = data.length;
     const lineNum = Math.floor(dataLen / limitCountOnDirection);
     const lineCount =
       dataLen % limitCountOnDirection > 0 ? lineNum + 1 : lineNum;
-    if (direction === GridDirection.HORIZONTAL) {
+    if (dataDirection === GridDataDirection.HORIZONTAL) {
       contentProps.width = defaultItemData.width * limitCountOnDirection;
       contentProps.height = lineCount * defaultItemData.height;
       this.state.maxCols = limitCountOnDirection;
@@ -344,7 +344,7 @@ export class VirtualGrid extends Component {
   }
 
   updateRenderDatas = () => {
-    const { data, direction, limitCountOnDirection } = this.props;
+    const { data, dataDirection, limitCountOnDirection } = this.props;
     const { wrapperProps, defaultItemData, maxCols, maxRows } = this.state;
     const wrapperWidth = wrapperProps.width;
     const wrapperHeight = wrapperProps.height;
@@ -369,7 +369,7 @@ export class VirtualGrid extends Component {
       .fill(null)
       .map((_, i) => {
         const ref = createRef();
-        if (direction === GridDirection.HORIZONTAL) {
+        if (dataDirection === GridDataDirection.HORIZONTAL) {
           const rowIndex = Math.floor(i / renderCols);
           const colIndex = i % renderCols;
           const top = rowIndex * itemHeight;

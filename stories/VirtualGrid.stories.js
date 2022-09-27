@@ -1,6 +1,6 @@
 import React from 'react';
 import { VirtualGrid } from '../src/components/VirtualGrid';
-import { GridDirection } from '../src/types';
+import { GridDataDirection } from '../src/types';
 export default {
   title: 'Virtual Grid',
   component: VirtualGrid,
@@ -43,7 +43,7 @@ export const normal = () => {
           </div>
         )}
         data={dataArr}
-        direction={GridDirection.HORIZONTAL}
+        dataDirection={GridDataDirection.HORIZONTAL}
         limitCountOnDirection={10}
       />
     </div>
