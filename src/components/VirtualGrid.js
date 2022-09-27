@@ -23,7 +23,6 @@ export class VirtualGrid extends Component {
     isInited: false,
     wrapperProps: {},
     contentProps: {},
-    dataProps: {},
     renderDatas: [],
     defaultItemData: {},
     maxCols: 0,
@@ -52,9 +51,6 @@ export class VirtualGrid extends Component {
     if (prevState.isInited !== isInited && isInited) {
       this.initWrapperProps();
       this.updateRenderDatas();
-    }
-    if (prevState.renderDatas !== renderDatas) {
-      this.updateDataProps();
     }
   }
 
@@ -356,7 +352,6 @@ export class VirtualGrid extends Component {
     const renderDatas = Array(renderNum)
       .fill(null)
       .map((_, i) => {
-        const ref = createRef();
         const rowIndex = Math.floor(i / renderCols);
         const colIndex = i % renderCols;
         const top = rowIndex * itemHeight;
@@ -368,24 +363,9 @@ export class VirtualGrid extends Component {
           row: rowIndex,
           col: colIndex,
           data: targetData,
-          ref,
         };
       });
     updateReactState(this, renderDatas, 'renderDatas');
-  };
-
-  updateDataProps = () => {
-    const { renderDatas, dataProps } = this.state;
-    renderDatas.forEach(renderData => {
-      const { data, ref } = renderData;
-      const { offsetWidth, offsetHeight } = ref.current;
-      const dataProp = dataProps[data.key];
-      dataProps[data.key] = {
-        ...dataProp,
-        width: offsetWidth,
-        height: offsetHeight,
-      };
-    });
   };
 
   render() {
@@ -413,7 +393,6 @@ export class VirtualGrid extends Component {
               style={{ top: render.top, left: render.left }}
               unit={unit}
               key={`virtual-grid-item-${render.data.key}`}
-              ref={render.ref}
             >
               {itemRenderer(render.data)}
             </ItemWrapper>
