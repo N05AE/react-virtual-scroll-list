@@ -5,11 +5,7 @@ import {
   PreRenderWrapper,
   ItemWrapper,
 } from '../styles/VirtualGridStyles';
-import {
-  GridDataDirection,
-  virtualGridDefaultProps,
-  virtualGridProps,
-} from '../types';
+import { virtualGridDefaultProps, virtualGridProps } from '../types';
 import { updateReactState } from '../utils/ReactUtils';
 
 export class VirtualGrid extends Component {
@@ -317,23 +313,15 @@ export class VirtualGrid extends Component {
   };
 
   initContentProps = () => {
-    const { dataDirection, limitCountOnDirection, data } = this.props;
+    const { dataDirection, rowLimitCount, data } = this.props;
     const { defaultItemData, contentProps } = this.state;
     const dataLen = data.length;
-    const lineNum = Math.floor(dataLen / limitCountOnDirection);
-    const lineCount =
-      dataLen % limitCountOnDirection > 0 ? lineNum + 1 : lineNum;
-    if (dataDirection === GridDataDirection.HORIZONTAL) {
-      contentProps.width = defaultItemData.width * limitCountOnDirection;
-      contentProps.height = lineCount * defaultItemData.height;
-      this.state.maxCols = limitCountOnDirection;
-      this.state.maxRows = Math.ceil(dataLen / limitCountOnDirection);
-    } else {
-      contentProps.width = lineCount * defaultItemData.width;
-      contentProps.height = defaultItemData.height * limitCountOnDirection;
-      this.state.maxCols = Math.ceil(dataLen / limitCountOnDirection);
-      this.state.maxRows = limitCountOnDirection;
-    }
+    const lineNum = Math.floor(dataLen / rowLimitCount);
+    const lineCount = dataLen % rowLimitCount > 0 ? lineNum + 1 : lineNum;
+    contentProps.width = defaultItemData.width * rowLimitCount;
+    contentProps.height = lineCount * defaultItemData.height;
+    this.state.maxCols = rowLimitCount;
+    this.state.maxRows = Math.ceil(dataLen / rowLimitCount);
   };
 
   initDefaultItemData() {
@@ -344,7 +332,7 @@ export class VirtualGrid extends Component {
   }
 
   updateRenderDatas = () => {
-    const { data, dataDirection, limitCountOnDirection } = this.props;
+    const { data, dataDirection, rowLimitCount } = this.props;
     const { wrapperProps, defaultItemData, maxCols, maxRows } = this.state;
     const wrapperWidth = wrapperProps.width;
     const wrapperHeight = wrapperProps.height;
@@ -369,35 +357,19 @@ export class VirtualGrid extends Component {
       .fill(null)
       .map((_, i) => {
         const ref = createRef();
-        if (dataDirection === GridDataDirection.HORIZONTAL) {
-          const rowIndex = Math.floor(i / renderCols);
-          const colIndex = i % renderCols;
-          const top = rowIndex * itemHeight;
-          const left = colIndex * itemWidth;
-          const targetData = data[rowIndex * limitCountOnDirection + colIndex];
-          return {
-            top,
-            left,
-            row: rowIndex,
-            col: colIndex,
-            data: targetData,
-            ref,
-          };
-        } else {
-          const colIndex = Math.floor(i / renderRows);
-          const rowIndex = i % renderRows;
-          const top = rowIndex * itemHeight;
-          const left = colIndex * itemWidth;
-          const targetData = data[colIndex * limitCountOnDirection + rowIndex];
-          return {
-            top,
-            left,
-            row: rowIndex,
-            col: colIndex,
-            data: targetData,
-            ref,
-          };
-        }
+        const rowIndex = Math.floor(i / renderCols);
+        const colIndex = i % renderCols;
+        const top = rowIndex * itemHeight;
+        const left = colIndex * itemWidth;
+        const targetData = data[rowIndex * rowLimitCount + colIndex];
+        return {
+          top,
+          left,
+          row: rowIndex,
+          col: colIndex,
+          data: targetData,
+          ref,
+        };
       });
     updateReactState(this, renderDatas, 'renderDatas');
   };
