@@ -36,16 +36,19 @@ export class VirtualGrid extends Component {
     scrollLeft: 0,
     rowOrder: [],
     colOrder: [],
+    lastHitRowTop: null,
+    lastHitRowBottom: null,
+    lastHitColRight: null,
+    lastHitColLeft: null,
   };
 
   componentDidMount() {
     this.initProps();
     this.initEvents();
-    console.log(this.state);
   }
 
-  getSnapshotBeforeUpdate(prevProps) {
-    return null;
+  componentWillUnmount() {
+    this.wrapperRef.current.removeEventListener('scroll', this.onScroll);
   }
 
   componentDidUpdate(_, prevState) {
@@ -57,22 +60,24 @@ export class VirtualGrid extends Component {
     if (prevState.renderDatas !== renderDatas) {
       this.updateDataProps();
     }
-    // console.log(this.state);
   }
 
   initEvents = () => {
-    this.wrapperRef.current.addEventListener('scroll', event => {
-      const { scrollLeft, scrollTop } = this.state;
-      const newScrollLeft = event.target.scrollLeft;
-      const newScrollTop = event.target.scrollTop;
-      if (scrollTop !== newScrollTop) {
-        this.handleScroll(newScrollTop > scrollTop ? 'down' : 'up');
-        this.state.scrollTop = newScrollTop;
-      } else if (scrollLeft !== newScrollLeft) {
-        this.handleScroll(newScrollLeft > scrollLeft ? 'right' : 'left');
-        this.state.scrollLeft = newScrollLeft;
-      }
-    });
+    this.wrapperRef.current.addEventListener('scroll', this.onScroll);
+  };
+
+  onScroll = event => {
+    event.preventDefault();
+    const { scrollLeft, scrollTop } = this.state;
+    const newScrollLeft = event.target.scrollLeft;
+    const newScrollTop = event.target.scrollTop;
+    if (scrollTop !== newScrollTop) {
+      this.handleScroll(newScrollTop > scrollTop ? 'down' : 'up');
+      this.state.scrollTop = newScrollTop;
+    } else if (scrollLeft !== newScrollLeft) {
+      this.handleScroll(newScrollLeft > scrollLeft ? 'right' : 'left');
+      this.state.scrollLeft = newScrollLeft;
+    }
   };
 
   handleScroll = dir => {
@@ -87,6 +92,10 @@ export class VirtualGrid extends Component {
       renderRows,
       maxCols,
       maxRows,
+      lastHitRowTop,
+      lastHitRowBottom,
+      lastHitColRight,
+      lastHitColLeft,
     } = this.state;
     const { width, height } = wrapperProps;
     const itemWidth = defaultItemData.width;
@@ -98,95 +107,175 @@ export class VirtualGrid extends Component {
     const x1 = x0 + width;
     const y1 = y0 + height;
     if (dir === 'up') {
-      const hitRowTop = Math.floor(y0 / itemHeight);
-      if (hitRowTop === 0 || renderRows === maxRows) {
+      let hitRowTopIndex = Math.floor(y0 / itemHeight);
+      if (hitRowTopIndex < 0) {
+        hitRowTopIndex = 0;
+      }
+      if (
+        lastHitRowTop === hitRowTopIndex ||
+        renderRows === maxRows ||
+        hitRowTopIndex + renderRows - 1 >= maxRows
+      ) {
         return;
       }
-      const targetRowOrderIndex = hitRowTop % renderRows; // 这里是当前滚动位置对应的render row
-      const newRowOrder = this.rebuildRowOrder(targetRowOrderIndex, rowOrder);
-      // const newRow = Math.floor(y0 / itemHeight) - 1;
-      // const half = Math.round((y0 % itemHeight) / itemHeight);
-      // const firstRow = rowOrder[0];
-      // const firstRowData = renderDatas[firstRow * renderCols];
+      this.state.lastHitRowTop = hitRowTopIndex;
+      const targetRowOrderIndex = hitRowTopIndex % renderRows;
+      let newRowOrder = rowOrder;
+      if (hitRowTopIndex > 0) {
+        newRowOrder = this.rotateOrderLeft(targetRowOrderIndex, rowOrder);
+      }
       for (let r = 0; r < renderRows; r++) {
-        const row = hitRowTop + r - 1;
-        const renderRow = rowOrder[r];
+        let rowIndex = hitRowTopIndex + r;
+        if (hitRowTopIndex > 0) {
+          rowIndex -= 1;
+        }
+        const renderRow = newRowOrder[r];
         for (let i = 0; i < renderCols; i++) {
           const render = renderDatas[renderRow * renderCols + i];
-          const targetData = data[row * maxCols + render.col];
+          const targetData = data[rowIndex * maxCols + render.col];
           if (!targetData) {
             break;
           }
           const newRender = {
             ...render,
-            row,
-            top: row * itemHeight,
+            row: rowIndex,
+            top: rowIndex * itemHeight,
             data: targetData,
           };
-          renderDatas[row * renderCols + i] = newRender;
+          renderDatas[renderRow * renderCols + i] = newRender;
         }
       }
       this.state.rowOrder = newRowOrder;
       this.forceUpdate();
     } else if (dir === 'down') {
-      const hitRowBottom = Math.floor(y1 / itemHeight);
-      if (hitRowBottom === maxRows - 1 || renderRows === maxRows) {
+      let hitRowBottomIndex = Math.floor(y1 / itemHeight);
+      if (hitRowBottomIndex >= maxRows) {
+        hitRowBottomIndex = maxRows - 1;
+      }
+      if (
+        hitRowBottomIndex === lastHitRowBottom ||
+        renderRows === maxRows ||
+        hitRowBottomIndex - renderRows + 1 <= 0
+      ) {
         return;
       }
-      const targetRowOrderIndex = hitRowBottom % renderRows; // 这里是当前滚动位置对应的render row
-      const newRowOrder = this.rebuildRowOrder2(targetRowOrderIndex, rowOrder);
+      this.state.lastHitRowBottom = hitRowBottomIndex;
+      const targetRowOrderIndex = hitRowBottomIndex % renderRows; // 这里是当前滚动位置对应的render row
+      let newRowOrder = rowOrder;
+      if (hitRowBottomIndex < maxRows - 1) {
+        newRowOrder = this.rotateOrderRight(targetRowOrderIndex, rowOrder);
+      }
       for (let r = 0; r < renderRows; r++) {
-        const row = hitRowBottom - r + 1;
-        const renderRow = rowOrder[renderRows - r - 1];
+        let rowIndex;
+        if (hitRowBottomIndex < maxRows - 1) {
+          rowIndex = hitRowBottomIndex - r + 1;
+        } else {
+          rowIndex = hitRowBottomIndex - r;
+        }
+        const renderRow = newRowOrder[renderRows - r - 1];
         for (let i = 0; i < renderCols; i++) {
           const render = renderDatas[renderRow * renderCols + i];
-          const targetData = data[row * maxCols + render.col];
+          const targetData = data[rowIndex * maxCols + render.col];
           if (!targetData) {
             break;
           }
           const newRender = {
             ...render,
-            row,
-            top: row * itemHeight,
+            row: rowIndex,
+            top: rowIndex * itemHeight,
             data: targetData,
           };
-          renderDatas[row * renderCols + i] = newRender;
+          renderDatas[renderRow * renderCols + i] = newRender;
         }
       }
       this.state.rowOrder = newRowOrder;
-
-      // const newRow = Math.floor(y1 / itemHeight) + 1;
-      // const half = Math.round((y1 % itemHeight) / itemHeight);
-      // const lastRow = rowOrder[renderRows - 1];
-      // const lastRowData = renderDatas[lastRow * renderCols];
-      // if (half === 1 && newRow < maxRows && newRow > lastRowData.row) {
-      //   const firstRow = rowOrder.shift();
-      //   rowOrder.push(firstRow);
-      //   for (let i = 0; i < renderCols; i++) {
-      //     const render = renderDatas[firstRow * renderCols + i];
-      //     const targetData = data[newRow * maxCols + render.col];
-      //     const newRender = {
-      //       ...render,
-      //       top: newRow * itemHeight,
-      //       row: newRow,
-      //       data: targetData,
-      //     };
-      //     renderDatas[firstRow * renderCols + i] = newRender;
-      //   }
-      // }
       this.forceUpdate();
     } else if (dir === 'left') {
-      const newCol = Math.floor(x0 / itemWidth) - 1;
-
+      let hitColLeftIndex = Math.floor(x0 / itemWidth);
+      if (hitColLeftIndex < 0) {
+        hitColLeftIndex = 0;
+      }
+      if (
+        hitColLeftIndex === lastHitColLeft ||
+        renderCols === maxCols ||
+        hitColLeftIndex + renderCols - 1 >= maxCols
+      ) {
+        return;
+      }
+      this.state.lastHitColLeft = hitColLeftIndex;
+      const targetColOrderIndex = hitColLeftIndex % renderCols;
+      let newColOrder = colOrder;
+      if (hitColLeftIndex > 0) {
+        newColOrder = this.rotateOrderLeft(targetColOrderIndex, colOrder);
+      }
+      this.state.colOrder = newColOrder;
+      for (let c = 0; c < renderCols; c++) {
+        let colIndex = hitColLeftIndex + c;
+        if (hitColLeftIndex > 0) {
+          colIndex -= 1;
+        }
+        const renderCol = newColOrder[c];
+        for (let i = 0; i < renderRows; i++) {
+          const render = renderDatas[i * renderCols + renderCol];
+          const targetData = data[render.row * maxCols + colIndex];
+          if (!targetData) {
+            break;
+          }
+          const newRender = {
+            ...render,
+            col: colIndex,
+            left: colIndex * itemWidth,
+            data: targetData,
+          };
+          renderDatas[i * renderCols + renderCol] = newRender;
+        }
+      }
       this.forceUpdate();
     } else if (dir === 'right') {
-      const newCol = Math.floor(x1 / itemWidth) + 1;
-
+      let hitColRightIndex = Math.floor(x1 / itemWidth);
+      if (hitColRightIndex >= maxCols) {
+        hitColRightIndex = maxCols - 1;
+      }
+      if (
+        hitColRightIndex === lastHitColRight ||
+        renderCols === maxCols ||
+        hitColRightIndex - renderCols + 1 <= 0
+      ) {
+        return;
+      }
+      this.state.lastHitColRight = hitColRightIndex;
+      const targetColOrderIndex = hitColRightIndex % renderCols;
+      let newColOrder = colOrder;
+      if (hitColRightIndex < maxRows - 1) {
+        newColOrder = this.rotateOrderRight(targetColOrderIndex, colOrder);
+      }
+      this.state.colOrder = newColOrder;
+      for (let c = 0; c < renderCols; c++) {
+        let colIndex = hitColRightIndex - c;
+        if (hitColRightIndex < maxCols - 1) {
+          colIndex += 1;
+        }
+        const renderCol = newColOrder[c];
+        for (let i = 0; i < renderRows; i++) {
+          const render = renderDatas[i * renderCols + renderCol];
+          const targetData = data[render.row * maxCols + colIndex];
+          if (!targetData) {
+            break;
+          }
+          const newRender = {
+            ...render,
+            col: colIndex,
+            left: colIndex * itemWidth,
+            data: targetData,
+          };
+          renderDatas[i * renderCols + renderCol] = newRender;
+        }
+      }
       this.forceUpdate();
     }
   };
 
-  rebuildRowOrder = (targetIndex, orderArr) => {
+  rotateOrderLeft = (targetIndex, orderArr) => {
     const newOrder = orderArr.slice();
     if (targetIndex > 1) {
       for (let i = 0; i < targetIndex; i++) {
@@ -200,9 +289,8 @@ export class VirtualGrid extends Component {
     return newOrder;
   };
 
-  rebuildRowOrder2 = (targetIndex, orderArr) => {
+  rotateOrderRight = (targetIndex, orderArr) => {
     const newOrder = orderArr.slice();
-    345612;
     if (targetIndex < newOrder.length - 2) {
       for (let i = newOrder.length - 1; i > targetIndex + 1; i--) {
         const lastElm = newOrder.pop();
