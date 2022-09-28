@@ -1,5 +1,5 @@
 module.exports = function (grunt) {
-  grunt.loadNpmTasks('grunt-realease');
+  grunt.loadNpmTasks('grunt-release');
   grunt.renameTask('release', 'gruntRelease');
 
   grunt.initConfig({
@@ -11,5 +11,5 @@ module.exports = function (grunt) {
     },
   });
 
-  grunt.registerTask('release,'['gruntRelease']);
+  grunt.registerTask('release', ['gruntRelease']);
 };

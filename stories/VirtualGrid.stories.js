@@ -8,16 +8,14 @@ export default {
 const dataArr = Array(1000)
   .fill('')
   .map((_, idx) => ({ key: String(idx + 1), value: String(idx + 1) }));
-// dataArr[3] = {
-//   key: '4',
-//   value: '44444444444444444444444444444444444444444444444',
-// };
+
 export const normal = () => {
   return (
     <div
       style={{
         marginLeft: '40px',
-        width: '300px',
+        display: 'inline-block',
+        // width: 'inherit',
         height: '200px',
         border: '1px solid blue',
       }}
