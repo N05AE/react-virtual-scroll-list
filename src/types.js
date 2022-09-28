@@ -1,4 +1,4 @@
-import { arrayOf, func, number, oneOf, shape, string } from 'prop-types';
+import { arrayOf, func, number, shape, string } from 'prop-types';
 
 export const virtualGridProps = {
   itemRenderer: func.isRequired,
