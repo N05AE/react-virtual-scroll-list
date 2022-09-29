@@ -21,6 +21,9 @@ export class VirtualGrid extends Component {
 
   state = {
     isInited: false,
+  };
+
+  gridProps = {
     wrapperProps: {},
     contentProps: {},
     renderDatas: [],
@@ -47,7 +50,7 @@ export class VirtualGrid extends Component {
   }
 
   componentDidUpdate(_, prevState) {
-    const { isInited, renderDatas } = this.state;
+    const { isInited } = this.state;
     if (prevState.isInited !== isInited && isInited) {
       this.initWrapperProps();
       this.updateRenderDatas();
@@ -60,17 +63,17 @@ export class VirtualGrid extends Component {
 
   onScroll = event => {
     event.preventDefault();
-    const { scrollLeft, scrollTop } = this.state;
+    const { scrollLeft, scrollTop } = this.gridProps;
     const newScrollLeft =
       event.target.scrollLeft > 0 ? event.target.scrollLeft : 0;
     const newScrollTop =
       event.target.scrollTop > 0 ? event.target.scrollTop : 0;
     if (scrollTop !== newScrollTop) {
       this.handleScroll(newScrollTop > scrollTop ? 'down' : 'up');
-      this.state.scrollTop = newScrollTop;
+      this.gridProps.scrollTop = newScrollTop;
     } else if (scrollLeft !== newScrollLeft) {
       this.handleScroll(newScrollLeft > scrollLeft ? 'right' : 'left');
-      this.state.scrollLeft = newScrollLeft;
+      this.gridProps.scrollLeft = newScrollLeft;
     }
   };
 
@@ -90,7 +93,7 @@ export class VirtualGrid extends Component {
       lastBottomIndex,
       lastRightIndex,
       lastLeftIndex,
-    } = this.state;
+    } = this.gridProps;
     const { width, height } = wrapperProps;
     const itemWidth = defaultItemData.width;
     const itemHeight = defaultItemData.height;
@@ -110,7 +113,7 @@ export class VirtualGrid extends Component {
       ) {
         return;
       }
-      this.state.lastTopIndex = topIndex;
+      this.gridProps.lastTopIndex = topIndex;
       const targetRowOrderIndex = topIndex % renderRows;
       let newRowOrder = rowOrder;
       topIndex > 0 &&
@@ -136,7 +139,7 @@ export class VirtualGrid extends Component {
           renderDatas[renderRow * renderCols + i] = newRender;
         }
       }
-      this.state.rowOrder = newRowOrder;
+      this.gridProps.rowOrder = newRowOrder;
       this.forceUpdate();
     } else if (dir === 'down') {
       let bottomIndex = Math.floor(y1 / itemHeight);
@@ -148,7 +151,7 @@ export class VirtualGrid extends Component {
       ) {
         return;
       }
-      this.state.lastBottomIndex = bottomIndex;
+      this.gridProps.lastBottomIndex = bottomIndex;
       const targetRowOrderIndex = bottomIndex % renderRows; // 这里是当前滚动位置对应的render row
       let newRowOrder = rowOrder;
       bottomIndex < maxRows - 1 &&
@@ -176,7 +179,7 @@ export class VirtualGrid extends Component {
           renderDatas[renderRow * renderCols + i] = newRender;
         }
       }
-      this.state.rowOrder = newRowOrder;
+      this.gridProps.rowOrder = newRowOrder;
       this.forceUpdate();
     } else if (dir === 'left') {
       let leftIndex = Math.floor(x0 / itemWidth);
@@ -188,12 +191,12 @@ export class VirtualGrid extends Component {
       ) {
         return;
       }
-      this.state.lastLeftIndex = leftIndex;
+      this.gridProps.lastLeftIndex = leftIndex;
       const targetColOrderIndex = leftIndex % renderCols;
       let newColOrder = colOrder;
       leftIndex > 0 &&
         (newColOrder = this.rotateOrderLeft(targetColOrderIndex, colOrder));
-      this.state.colOrder = newColOrder;
+      this.gridProps.colOrder = newColOrder;
       for (let c = 0; c < renderCols; c++) {
         let colIndex = leftIndex + c;
         if (leftIndex > 0) {
@@ -226,12 +229,12 @@ export class VirtualGrid extends Component {
       ) {
         return;
       }
-      this.state.lastRightIndex = rightIndex;
+      this.gridProps.lastRightIndex = rightIndex;
       const targetColOrderIndex = rightIndex % renderCols;
       let newColOrder = colOrder;
       rightIndex < maxRows - 1 &&
         (newColOrder = this.rotateOrderRight(targetColOrderIndex, colOrder));
-      this.state.colOrder = newColOrder;
+      this.gridProps.colOrder = newColOrder;
       for (let c = 0; c < renderCols; c++) {
         let colIndex = rightIndex - c;
         if (rightIndex < maxCols - 1) {
@@ -293,39 +296,39 @@ export class VirtualGrid extends Component {
 
   initWrapperProps = () => {
     const { clientWidth, clientHeight } = this.wrapperRef.current;
-    const { wrapperProps } = this.state;
+    const { wrapperProps } = this.gridProps;
     wrapperProps.width = clientWidth;
     wrapperProps.height = clientHeight;
   };
 
   initContentProps = () => {
     const { direction, directionLimitCeils, data } = this.props;
-    const { defaultItemData, contentProps } = this.state;
+    const { defaultItemData, contentProps } = this.gridProps;
     const dataLen = data.length;
     const maxLines = Math.ceil(dataLen / directionLimitCeils);
     if (direction === Direction.VERTICAL) {
       contentProps.width = defaultItemData.width * maxLines;
       contentProps.height = defaultItemData.height * directionLimitCeils;
-      this.state.maxCols = maxLines;
-      this.state.maxRows = directionLimitCeils;
+      this.gridProps.maxCols = maxLines;
+      this.gridProps.maxRows = directionLimitCeils;
     } else {
       contentProps.width = defaultItemData.width * directionLimitCeils;
       contentProps.height = maxLines * defaultItemData.height;
-      this.state.maxCols = directionLimitCeils;
-      this.state.maxRows = maxLines;
+      this.gridProps.maxCols = directionLimitCeils;
+      this.gridProps.maxRows = maxLines;
     }
   };
 
   initDefaultItemData() {
     const { clientWidth, clientHeight } = this.preRenderRef.current;
-    const { defaultItemData } = this.state;
+    const { defaultItemData } = this.gridProps;
     defaultItemData.width = clientWidth;
     defaultItemData.height = clientHeight;
   }
 
   updateRenderDatas = () => {
     const { data, direction, directionLimitCeils } = this.props;
-    const { wrapperProps, defaultItemData, maxCols, maxRows } = this.state;
+    const { wrapperProps, defaultItemData, maxCols, maxRows } = this.gridProps;
     const wrapperWidth = wrapperProps.width;
     const wrapperHeight = wrapperProps.height;
     const itemWidth = defaultItemData.width;
@@ -335,14 +338,14 @@ export class VirtualGrid extends Component {
     const renderCols = Math.min(showCols + 2, maxCols);
     const renderRows = Math.min(showRows + 2, maxRows);
     const renderNum = renderCols * renderRows;
-    this.state.showCols = showCols;
-    this.state.showRows = showRows;
-    this.state.renderCols = renderCols;
-    this.state.renderRows = renderRows;
-    this.state.rowOrder = Array(renderRows)
+    this.gridProps.showCols = showCols;
+    this.gridProps.showRows = showRows;
+    this.gridProps.renderCols = renderCols;
+    this.gridProps.renderRows = renderRows;
+    this.gridProps.rowOrder = Array(renderRows)
       .fill(0)
       .map((_, i) => i);
-    this.state.colOrder = Array(renderCols)
+    this.gridProps.colOrder = Array(renderCols)
       .fill(0)
       .map((_, i) => i);
     const renderDatas = Array(renderNum)
@@ -364,7 +367,8 @@ export class VirtualGrid extends Component {
           data: data[dataIndex],
         };
       });
-    updateReactState(this, renderDatas, 'renderDatas');
+    this.gridProps.renderDatas = renderDatas;
+    this.forceUpdate();
   };
 
   render() {
@@ -378,7 +382,8 @@ export class VirtualGrid extends Component {
       className,
       style,
     } = this.props;
-    const { isInited, contentProps, renderDatas } = this.state;
+    const { contentProps, renderDatas } = this.gridProps;
+    const { isInited } = this.state;
     const preRenderData = data[0];
     return (
       <GridWrapper

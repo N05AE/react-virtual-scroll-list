@@ -1,4 +1,4 @@
-import { Component } from 'react';
+import React, { Component } from 'react';
 import { Direction, virtualListDefaultProps, virtualListProps } from '../types';
 import { VirtualGrid } from './VirtualGrid';
 
