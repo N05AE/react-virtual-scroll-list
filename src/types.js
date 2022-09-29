@@ -1,19 +1,45 @@
-import { arrayOf, func, number, shape, string } from 'prop-types';
+import { arrayOf, func, number, oneOf, shape, string } from 'prop-types';
 
-export const virtualGridProps = {
-  itemRenderer: func.isRequired,
-  data: arrayOf(shape({ key: string.isRequired })).isRequired,
+export const Direction = {
+  VERTICAL: 0,
+  HORIZONTAL: 1,
+};
+
+export const commonProps = {
+  tabIndex: string,
   unit: string,
+  direction: oneOf(Object.values(Direction)),
   width: string,
   height: string,
-  rowLimitCount: number,
-  tabIndex: string,
+  style: shape({}),
   className: string,
+  data: arrayOf(shape({ key: string.isRequired })).isRequired,
+  itemRenderer: func.isRequired,
+};
+
+export const commonDefaultProps = {
+  direction: Direction.HORIZONTAL,
+  tabIndex: '0',
+  unit: 'px',
+  style: {},
+};
+
+export const virtualGridProps = {
+  ...commonProps,
+  directionLimitCeils: number,
 };
 
 export const virtualGridDefaultProps = {
-  unit: 'px',
-  width: '100%',
-  height: '100%',
-  rowLimitCount: 3,
+  ...commonDefaultProps,
+  directionLimitCeils: 3,
+  width: '500px',
+  height: '300px',
+};
+
+export const virtualListProps = {
+  ...commonProps,
+};
+
+export const virtualListDefaultProps = {
+  ...commonDefaultProps,
 };

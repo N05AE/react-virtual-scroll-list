@@ -1,2 +1,2 @@
 export { VirtualGrid } from './components/VirtualGrid';
-export { virtualGridProps } from './types';
+export { virtualGridProps, virtualListProps } from './types';

@@ -8,5 +8,5 @@ module.exports = {
   trailingComma: 'all', // 数组尾逗号。
   bracketSpacing: true, // {foo: xx}还是{ foo: xx }
   jsxBracketSameLine: false,
-  arrowParens: 'avoid', //剪头函数参数是否使用（）
+  arrowParens: 'avoid' //剪头函数参数是否使用（）
 };

@@ -2,12 +2,14 @@
   "name": "@easonviip/react-virtual-scroll-list",
   "version": "1.0.6",
   "description": "Scroll list render for large datas",
-  "main": "index.js",
+  "main": "dist/index.js",
+  "module": "dist/index.es.js",
   "scripts": {
     "build": "rollup -c",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook",
-    "release": "npm run build && grunt --base . --gruntfile gruntfile.js release"
+    "release": "npm run lint && npm run build && grunt --base . --gruntfile gruntfile.js release",
+    "lint": "eslint --fix --ext .js,.jsx src"
   },
   "publishConfig": {
     "registry": "https://registry.npmjs.org/",
@@ -42,12 +44,9 @@
     "@rollup/plugin-node-resolve": "^14.0.1",
     "@storybook/addon-a11y": "^6.5.10",
     "@storybook/react": "^6.5.10",
-    "babel-eslint": "^10.1.0",
     "babel-loader": "^8.2.5",
     "eslint": "^8.23.1",
-    "eslint-plugin-jsx-a11y": "^6.6.1",
     "eslint-plugin-react": "^7.31.8",
-    "eslint-plugin-react-hooks": "^4.6.0",
     "grunt": "^1.5.3",
     "grunt-release": "^0.14.0",
     "husky": "^8.0.1",
