@@ -1,6 +1,6 @@
 {
   "name": "@easonviip/react-virtual-scroll-list",
-  "version": "1.0.8",
+  "version": "1.0.9",
   "description": "Scroll list render for large datas",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -8,7 +8,10 @@
     "build": "rollup -c",
     "storybook": "start-storybook -p 6006 -s public",
     "build-storybook": "build-storybook",
-    "release": "npm run lint && npm run build && grunt --base . --gruntfile gruntfile.js release",
+    "registry": "npm config set registry https://registry.npmjs.com",
+    "npmLogin": "npm login",
+    "preRelease": "npm run lint && npm run build && npm run registry && npm run npmLogin",
+    "release": "npm run preRelease && grunt --base . --gruntfile gruntfile.js release",
     "lint": "eslint --fix --ext .js,.jsx src"
   },
   "publishConfig": {
