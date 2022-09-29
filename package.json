@@ -1,6 +1,6 @@
 {
   "name": "@easonviip/react-virtual-scroll-list",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "Scroll list render for large datas",
   "main": "dist/index.js",
   "module": "dist/index.es.js",
@@ -24,9 +24,9 @@
   "author": "N05AE",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/N0SAE/react-virtual-list/issues"
+    "url": "https://github.com/N05AE/react-virtual-scroll-list/issues"
   },
-  "homepage": "https://github.com/N0SAE/react-virtual-list#readme",
+  "homepage": "https://github.com/N05AE/react-virtual-scroll-list#readme",
   "peerDependencies": {
     "prop-types": ">=15.7.2",
     "react": ">=16.8.0",
