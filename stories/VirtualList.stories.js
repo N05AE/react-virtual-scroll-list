@@ -1,26 +1,27 @@
 import React from 'react';
-import { VirtualGrid } from '../src/components/VirtualGrid';
+import { VirtualList } from '../src/components/VirtualList';
 import { Direction } from '../src/types';
+
 export default {
-  title: 'Virtual Grid',
-  component: VirtualGrid,
+  title: 'Virtual List',
+  component: VirtualList,
 };
 
 const dataArr = Array(999)
   .fill('')
   .map((_, idx) => ({ key: String(idx + 1), value: String(idx + 1) }));
 
-const grid = dir => (
+const list = dir => (
   <div
     style={{
       marginLeft: '40px',
       display: 'inline-block',
-      // width: '500px',
-      // height: '200px',
+      width: 'auto',
+      height: 'auto',
       border: '1px solid blue',
     }}
   >
-    <VirtualGrid
+    <VirtualList
       itemRenderer={dt => (
         <div
           key={dt.key}
@@ -38,15 +39,14 @@ const grid = dir => (
       )}
       data={dataArr}
       direction={dir}
-      directionLimitCeils={20}
     />
   </div>
 );
 
-export const horizontalGrid = () => {
-  return grid(Direction.HORIZONTAL);
+export const horizontalList = () => {
+  return list(Direction.HORIZONTAL);
 };
 
-export const verticalGrid = () => {
-  return grid(Direction.VERTICAL);
+export const verticalList = () => {
+  return list(Direction.VERTICAL);
 };
