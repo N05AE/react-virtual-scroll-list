@@ -5,7 +5,7 @@ module.exports = function (grunt) {
   grunt.initConfig({
     gruntRelease: {
       options: {
-        npm: true,
+        npm: false,
         additionalFiles: ['package-lock.json'],
       },
     },
